@@ -1,5 +1,5 @@
 function X = OBA(fun,lambda,options)
-
+%LBFGS unnecessary
 %% Initialization
 
 if nargin<3
@@ -98,16 +98,19 @@ while(1)
     while(~isempty(Vk))
         cnt=cnt+1;
         if (quasi_newton == 1)
+            [PW,theta,invM] = lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
+            Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F) ;
+            
+            
             if(mem.m>0)
-                W = lbfgsFull(-PG,mem.DP(:,1:mem.m),mem.DG(:,1:mem.m),dot(mem.DG(:,mem.m),mem.DP(:,mem.m))/dot(mem.DG(:,mem.m),mem.DG(:,mem.m))   );
+                %W = lbfgsFull(-PG,mem.DP(:,1:mem.m),mem.DG(:,1:mem.m),dot(mem.DG(:,mem.m),mem.DP(:,mem.m))/dot(mem.DG(:,mem.m),mem.DG(:,mem.m))   );
+                %W = reduced_invHV_lbfgs(-PG,mem.DP,mem.DG,mem.m,mem.updates,mem.size,F);
+                W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
             else
                 W = -PG;
             end
-            W(setdiff((1:n)',F)) = 0;
             
-            [PW,theta,invM] = lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
-            %W = reduced_invHV_lbfgs(-PG,mem.DP,mem.DG,mem.m,mem.updates,mem.size,F);
-            Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F) ;
+            
         else
             Hvfun = @(v) fun.hess(v);
             W = cg_steihaug ( Hvfun, PG, delta, A, CGrestol, maxCGiter);
@@ -197,7 +200,7 @@ while(1)
                     end
                     mem.updates=mem.updates+1;
                     mem.m = min(mem.size,mem.updates);
-                %else
+                    %else
                     %disp('Skipping');
                 end
             end
