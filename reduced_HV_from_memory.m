@@ -1,6 +1,6 @@
-function [Hv] = reduced_HV_from_memory(V,PW,theta,invM,F)
+function [Hv] = reduced_HV_from_memory(V,PW,theta,invM,F,n)
     tV = V;
-    V = zeros(47236,1);
+    V = zeros(n,1);
     V(F)= tV;
    
     %Hv = Hvfun(X,Y-X,save);

@@ -99,7 +99,7 @@ while(1)
         cnt=cnt+1;
         if (quasi_newton == 1)
             [PW,theta,invM] = lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
-            Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F) ;
+            Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F,n) ;
             
             
             if(mem.m>0)
@@ -180,7 +180,7 @@ while(1)
     fun.setSave(X_trial);
     
     f_trial = fun.func();
-    
+
     while(1)
         if(f_trial+lambda*norm(X_trial(:),1)<=f_ista+lambda*l1_ista)
             grad_n = fun.grad();
