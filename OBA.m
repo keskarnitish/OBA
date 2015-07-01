@@ -128,6 +128,7 @@ while(1)
     end
     
     % Projected Backtracking Line Search
+    X_old = X;
     my_alpha = 1.0;
     q2 = @(XN,Hv) grad'*(XN-X)+(XN(F)-X(F))'*Hv*0.5+lambda*norm(XN,1);
     while(1)
@@ -180,9 +181,10 @@ while(1)
     while(1)
         if(f_trial+lambda*norm(X_trial(:),1)<=f_ista+lambda*l1_ista)
             grad_n = fun.grad();
+            
             if(quasi_newton == 1)
-                y = grad_n-grad;
-                s = alpha_dogleg*dogleg_d;
+                y = grad_n+lambda*SteepestDescent_ZeroActive(X_trial,grad_n,lambda)-PG;
+                s = X_trial - X_old;
                 if (dot(y,s)>1e-8)
                     %rho = 1/dot(s,y);
                     %H = (eye(n) - rho*s*y')*H*(eye(n) - rho*y*s') + rho*(s*s');
@@ -195,8 +197,8 @@ while(1)
                     end
                     mem.updates=mem.updates+1;
                     mem.m = min(mem.size,mem.updates);
-                else
-                    disp('Skipping');
+                %else
+                    %disp('Skipping');
                 end
             end
             X = X_trial;
