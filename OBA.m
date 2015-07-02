@@ -1,5 +1,5 @@
 function X = OBA(fun,lambda,options)
-%LBFGS unnecessary
+%True func during projection?
 %% Initialization
 
 if nargin<3
@@ -108,6 +108,7 @@ while(1)
                 W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
             else
                 W = -PG;
+                W(setdiff((1:n)',F)) = 0;
             end
             
             
@@ -138,17 +139,19 @@ while(1)
         XN = X + my_alpha*W;
         %indices violating orthant bounds are projected to zero
         XN(F(Z(F).*XN(F)<0)) = 0;
+        %fun.setSave(XN);
         Hv_N = Hvfun(XN(F)-X(F));
         ls_lhs = -q2(XN,Hv_N) + lambda*norm(X,1);
         
         if(ls_lhs >= 0)
+        %if( (f+lambda*l1) > (fun.func() + lambda*norm(XN,1)))
             X = XN;
             %f = q2(XN);
             %l1 = norm(XN,1);
             
-            gradN = grad;
-            gradN(F) = Hv_N + grad(F);
-            grad = gradN;
+%             gradN = grad;
+%             gradN(F) = Hv_N + grad(F);
+%             grad = gradN;
             break;
             
         else
@@ -180,7 +183,7 @@ while(1)
     fun.setSave(X_trial);
     
     f_trial = fun.func();
-
+    
     while(1)
         if(f_trial+lambda*norm(X_trial(:),1)<=f_ista+lambda*l1_ista)
             grad_n = fun.grad();
