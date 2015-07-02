@@ -36,11 +36,11 @@ classdef LogReg < handle
         end
         
         
-        function [] = setXF(obj,F)
+        function [] = setMemoi(obj,F)
             obj.XF = obj.X(:,F);
         end
         
-        function [] = removeXF(obj,to_delete_index)
+        function [] = removeMemoi(obj,to_delete_index)
             obj.XF(:,to_delete_index)=[];
         end
         

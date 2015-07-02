@@ -1,5 +1,86 @@
 function X = OBA(fun,lambda,options)
-%True func during projection?
+% TO DO: Template, LASSO
+% OBA : A Second-Order Method for Convex L1-Regularized Optimization with Active Set Prediction 
+%  Minimization algorithm intended for composite convex functions and
+%   specifically for high-dimensional problems. 
+%  X = OBA(fun,lambda,[options]) returns the approximate minimizer of 
+%   the function fun + lambda*l1 where fun is object with member functions
+%   for function, gradient and Hessian (through Hessian-vector products) evaluations. 
+% 
+%   Input parameters
+%    fun is a required object, with 3 required fields (for L-BFGS) and 5
+%    (for Newton). Please use the funTemplate class to design your own
+%    class. Logistic Regression and LASSO are included in this package. 
+%
+%    If using quasi-Newton, the following three functions are required. 
+%    fun.setSave(X): Given an iterate X, this function sets X as the
+%     iterate for the object. Any check-pointing computations can be stored
+%     in the object. 
+%
+%    fun.func(): Having saved an iterate, this function computes the
+%     function value at the saved point. 
+%
+%    fun.grad(): Having saved an iterate, this function computes the
+%     gradient value at the saved point. 
+%    For Newton, in addition to the above functions, the following two
+%    member functions are also required. 
+%
+%    fun.hess(v): Given a vector v and having saved an iterate, this
+%     function computes the Hessian-vector product at the saved point.  
+%
+%    fun.setMemoi(F) and removeMemoi(del): Since OBA solves QPs in a subspace,
+%    it can benefit from memoization with enables subspace-Hessian
+%    computations. setMemoi(F) uses the free-set F to create check-pointed
+%    computations which enable easier subspace-Hessian computations and
+%    removeMemoi(del) removes the effect of the elements of del from the
+%    check-pointed computations. Please refer to LASSO.m for example. 
+%
+%
+%    options is an optional struct. In order to specify options, the user
+%    should first run options = GenOptions() and modify the structure as
+%    necessary. The details about the structure and the default values are
+%    as follows. 
+%
+%      options.optol: termination tolerance
+%          (default: 1e-6)
+%      options.qn: Quasi-Newton, 0 (Newton's Method), or 1 (quasi-Newton) 
+%          (default: 0)
+%      options.mem_size: quasi-Newton memory size
+%          (default: 20)
+%      options.maxiter: max number of iterations
+%          (default: 1000)
+%      options.printlev: print level, 0 (no printing) or 1
+%          (default: 1)
+%      options.CGtol: CG termination tolerance (for Newton's Method)
+%          (default: 1e-1)
+%      options.maxCGiter: max number of CG iterations (Newton's Method)
+%          (default: 1000).
+%   References: 
+%   A Second-Order Method for Convex L1-Regularized Optimization with
+%   Active Set Prediction. Link: http://arxiv.org/abs/1505.04315
+%
+%   Send comments/bug reports to Nitish Shirish Keskar,
+%   keskar.nitish@u.northwestern.edu
+%   Version 1.1, 2015, see GPL license info below.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  OBA 1.1 Copyright (C) 2015 Nitish Shirish Keskar
+%%  This program is free software: you can redistribute it and/or modify
+%%  it under the terms of the GNU General Public License as published by
+%%  the Free Software Foundation, either version 3 of the License, or
+%%  (at your option) any later version.
+%%
+%%  This program is distributed in the hope that it will be useful,
+%%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%  GNU General Public License for more details.
+%%
+%%  You should have received a copy of the GNU General Public License
+%%  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Initialization
 
 if nargin<3
@@ -90,7 +171,7 @@ while(1)
     F_zeros(end-tau+1:end)=[];
     A=union(A,F_zeros);
     
-    fun.setXF(F);
+    fun.setMemoi(F);
     cnt=0;
     
     % Correction Strategy
@@ -124,7 +205,7 @@ while(1)
         A=union(A,Vk);
         
         to_delete_index = ismember(F,Vk);
-        fun.removeXF(to_delete_index);
+        fun.removeMemoi(to_delete_index);
         
         %diag_of_H(to_delete_index)=[];
         F=setdiff(F,Vk);
