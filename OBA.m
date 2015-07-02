@@ -3,38 +3,40 @@ function X = OBA(fun,lambda,options)
 % OBA : A Second-Order Method for Convex L1-Regularized Optimization with Active Set Prediction 
 %  Minimization algorithm intended for composite convex functions and
 %   specifically for high-dimensional problems. 
-%  X = OBA(fun,lambda,[options]) returns the approximate minimizer of 
-%   the function fun + lambda*l1 where fun is object with member functions
-%   for function, gradient and Hessian (through Hessian-vector products) evaluations. 
+%  Usage: %  X = OBA(fun,lambda,[options])
+%  returns the approximate minimizer of the function fun + lambda*l1
+%  where fun is object with member functions for function, gradient and
+%  Hessian (through Hessian-vector products) evaluations. 
 % 
 %   Input parameters
-%    fun is a required object, with 3 required fields (for L-BFGS) and 5
-%    (for Newton). Please use the funTemplate class to design your own
-%    class. Logistic Regression and LASSO are included in this package. 
+%    fun is a required object, with 3 required member functions (for L-BFGS) and 5
+%    (for Newton's method). For ease of design, please use the funTemplate
+%    class to design your own class.
+%    Logistic Regression and LASSO are included in this package. 
 %
 %    If using quasi-Newton, the following three functions are required. 
-%    fun.setSave(X): Given an iterate X, this function sets X as the
-%     iterate for the object. Any check-pointing computations can be stored
-%     in the object. 
+%       fun.setSave(X): Given an iterate X, this function sets X as the
+%       iterate for the object. Any check-pointing computations can be stored
+%       in the object. 
 %
-%    fun.func(): Having saved an iterate, this function computes the
-%     function value at the saved point. 
+%       fun.func(): Having saved an iterate, this function computes the
+%       function value at the saved point. 
 %
-%    fun.grad(): Having saved an iterate, this function computes the
-%     gradient value at the saved point. 
+%       fun.grad(): Having saved an iterate, this function computes the
+%         gradient value at the saved point. 
+%
 %    For Newton, in addition to the above functions, the following two
 %    member functions are also required. 
 %
-%    fun.hess(v): Given a vector v and having saved an iterate, this
-%     function computes the Hessian-vector product at the saved point.  
+%       fun.setMemoi(F) and removeMemoi(del): Since OBA solves QPs in a subspace,
+%       it can benefit from memoization with enables subspace-Hessian
+%       computations. setMemoi(F) uses the free-set F to create check-pointed
+%       computations which enable easier subspace-Hessian computations and
+%       removeMemoi(del) removes the effect of the elements of del from the
+%       check-pointed computations. Please refer to LASSO.m for example. 
 %
-%    fun.setMemoi(F) and removeMemoi(del): Since OBA solves QPs in a subspace,
-%    it can benefit from memoization with enables subspace-Hessian
-%    computations. setMemoi(F) uses the free-set F to create check-pointed
-%    computations which enable easier subspace-Hessian computations and
-%    removeMemoi(del) removes the effect of the elements of del from the
-%    check-pointed computations. Please refer to LASSO.m for example. 
-%
+%       fun.hess(v): Given a (subspace) vector v and having saved an iterate, this
+%       function computes the subspace Hessian-vector product at the saved point.  
 %
 %    options is an optional struct. In order to specify options, the user
 %    should first run options = GenOptions() and modify the structure as
