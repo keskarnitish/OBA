@@ -1,5 +1,5 @@
 # OBA
-Author: [Nitish Shirish Keskar](users.iems.northwestern.edu/~nitish/)
+Author: [Nitish Shirish Keskar](http://users.iems.northwestern.edu/~nitish/)
 
 
 **OBA** is a second-order method for convex L1-regularized optimization with active-set prediction. 
