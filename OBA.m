@@ -1,51 +1,50 @@
 function X = OBA(fun,lambda,options)
-% TO DO: Template, LASSO
-% OBA : A Second-Order Method for Convex L1-Regularized Optimization with Active Set Prediction 
+% OBA : A Second-Order Method for Convex L1-Regularized Optimization with Active Set Prediction
 %  Minimization algorithm intended for composite convex functions and
-%   specifically for high-dimensional problems. 
-%  Usage: %  X = OBA(fun,lambda,[options])
+%   specifically for high-dimensional problems.
+%  Usage: X = OBA(fun,lambda,[options])
 %  returns the approximate minimizer of the function fun + lambda*l1
 %  where fun is object with member functions for function, gradient and
-%  Hessian (through Hessian-vector products) evaluations. 
-% 
+%  Hessian (through Hessian-vector products) evaluations.
+%
 %   Input parameters
 %    fun is a required object, with 3 required member functions (for L-BFGS) and 5
 %    (for Newton's method). For ease of design, please use the funTemplate
 %    class to design your own class.
-%    Logistic Regression and LASSO are included in this package. 
+%    Logistic Regression and LASSO are included in this package.
 %
-%    If using quasi-Newton, the following three functions are required. 
+%    If using quasi-Newton, the following three functions are required.
 %       fun.setSave(X): Given an iterate X, this function sets X as the
 %       iterate for the object. Any check-pointing computations can be stored
-%       in the object. 
+%       in the object.
 %
 %       fun.func(): Having saved an iterate, this function computes the
-%       function value at the saved point. 
+%       function value at the saved point.
 %
 %       fun.grad(): Having saved an iterate, this function computes the
-%         gradient value at the saved point. 
+%         gradient value at the saved point.
 %
 %    For Newton, in addition to the above functions, the following two
-%    member functions are also required. 
+%    member functions are also required.
 %
 %       fun.setMemoi(F) and removeMemoi(del): Since OBA solves QPs in a subspace,
 %       it can benefit from memoization with enables subspace-Hessian
 %       computations. setMemoi(F) uses the free-set F to create check-pointed
 %       computations which enable easier subspace-Hessian computations and
 %       removeMemoi(del) removes the effect of the elements of del from the
-%       check-pointed computations. Please refer to LASSO.m for example. 
+%       check-pointed computations. Please refer to LASSO.m for example.
 %
 %       fun.hess(v): Given a (subspace) vector v and having saved an iterate, this
-%       function computes the subspace Hessian-vector product at the saved point.  
+%       function computes the subspace Hessian-vector product at the saved point.
 %
 %    options is an optional struct. In order to specify options, the user
 %    should first run options = GenOptions() and modify the structure as
 %    necessary. The details about the structure and the default values are
-%    as follows. 
+%    as follows.
 %
 %      options.optol: termination tolerance
 %          (default: 1e-6)
-%      options.qn: Quasi-Newton, 0 (Newton's Method), or 1 (quasi-Newton) 
+%      options.qn: Quasi-Newton, 0 (Newton's Method), or 1 (quasi-Newton)
 %          (default: 0)
 %      options.mem_size: quasi-Newton memory size
 %          (default: 20)
@@ -57,7 +56,7 @@ function X = OBA(fun,lambda,options)
 %          (default: 1e-1)
 %      options.maxCGiter: max number of CG iterations (Newton's Method)
 %          (default: 1000).
-%   References: 
+%   References:
 %   A Second-Order Method for Convex L1-Regularized Optimization with
 %   Active Set Prediction. Link: http://arxiv.org/abs/1505.04315
 %
@@ -98,7 +97,6 @@ quasi_newton = options.qn;
 n = fun.num_features;
 X = zeros(n,1);
 perc=min(99,100-1/length(X)*100);
-
 
 delta=1e3;
 
@@ -179,22 +177,10 @@ while(1)
     % Correction Strategy
     total_variables_moved=0;
     while(~isempty(Vk))
-        cnt=cnt+1;
         if (quasi_newton == 1)
             [PW,theta,invM] = lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
             Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F,n) ;
-            
-            
-            if(mem.m>0)
-                %W = lbfgsFull(-PG,mem.DP(:,1:mem.m),mem.DG(:,1:mem.m),dot(mem.DG(:,mem.m),mem.DP(:,mem.m))/dot(mem.DG(:,mem.m),mem.DG(:,mem.m))   );
-                %W = reduced_invHV_lbfgs(-PG,mem.DP,mem.DG,mem.m,mem.updates,mem.size,F);
-                W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
-            else
-                W = -PG;
-                W(setdiff((1:n)',F)) = 0;
-            end
-            
-            
+            W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
         else
             Hvfun = @(v) fun.hess(v);
             W = cg_steihaug ( Hvfun, PG, delta, A, CGrestol, maxCGiter);
@@ -232,9 +218,9 @@ while(1)
             %f = q2(XN);
             %l1 = norm(XN,1);
             
-%             gradN = grad;
-%             gradN(F) = Hv_N + grad(F);
-%             grad = gradN;
+            %             gradN = grad;
+            %             gradN(F) = Hv_N + grad(F);
+            %             grad = gradN;
             break;
             
         else
