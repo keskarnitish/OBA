@@ -98,7 +98,6 @@ n = fun.num_features;
 X = zeros(n,1);
 perc=min(99,100-1/length(X)*100);
 
-delta=1e3;
 
 
 % Quasi Newton
@@ -183,7 +182,7 @@ while(1)
             W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
         else
             Hvfun = @(v) fun.hess(v);
-            W = cg_steihaug ( Hvfun, PG, delta, A, CGrestol, maxCGiter);
+            W = CG ( Hvfun, PG, A, CGrestol, maxCGiter);
         end
         
         

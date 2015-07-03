@@ -1,7 +1,8 @@
-function [ p, num_cg, iflag ] = cg_steihaug ( Hv, b, delta, A, errtol, maxit)
+function [ p, num_cg, iflag ] = CG ( Hv, b, A, errtol, maxit)
 % CG-Steihaug based on 
 % http://users.eecs.northwestern.edu/~morales/PSfiles/cg_steihaug.m
 n      = length(b);  
+delta = 1e3;
 %errtol = params(1); maxit  = params(2);
 iprnt  = 0;
 iflag  = ' ';
