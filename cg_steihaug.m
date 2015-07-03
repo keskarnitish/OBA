@@ -1,34 +1,6 @@
 function [ p, num_cg, iflag ] = cg_steihaug ( Hv, b, delta, A, errtol, maxit)
-% Quad_CG(P,P_0,Hv,save,PG,A,tol,maxiter,precond)
-%
-%--------------------------------------------------------------------------         
-%
-% ... This procedure approximately solves the following trust region 
-%     problem 
-%   
-%         minimize    Q(p) = 1/2 p'Gp + b'p  
-%         subject to  ||p|| <= Delta                      
-%
-%
-%     by means of the CG-Steihaug method. 
-%
-%--------------------------------------------------------------------------
-% INPUT
-%
-%             G:  Hessian matrix
-%             b:  gradient vector
-%         delta:  radius of the TR
-%     params(1):  relative residual reduction factor
-%     params(2):  max number of iterations
-%     params(3):  level of output
-%
-% OUTPUT
-%             p:  an aproximate solution of (1)-(2)
-%        num_cg:  number of CG iterations to achieve convergence
-%         iflag:  termination condition 
-%
-%--------------------------------------------------------------------------         
-%
+% CG-Steihaug based on 
+% http://users.eecs.northwestern.edu/~morales/PSfiles/cg_steihaug.m
 n      = length(b);  
 %errtol = params(1); maxit  = params(2);
 iprnt  = 0;

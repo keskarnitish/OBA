@@ -306,3 +306,13 @@ while(1)
 end
 
 end
+
+function output=soft_threshold_l1(y,lambda)
+output=sign(y).*max(abs(y)-lambda,0);
+end
+
+function Z=SteepestDescent_ZeroActive(X,grad,lambda)
+Z = zeros(size(grad));
+Z(X>0 | (X==0 & grad<-lambda)) = 1; 
+Z(X<0 | (X==0 & grad>lambda)) = -1;
+end
