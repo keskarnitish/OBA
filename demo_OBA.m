@@ -5,6 +5,6 @@
 
 %% Demo Script
 load breast_cancer.mat %Loads the data X and the labels y
-funObj = LogReg(X,y); %Creates the funObj object using the data loaded
+funObj = lossFunctions.LogReg(X,y); %Creates the funObj object using the data loaded
 lambda = 1/size(X,1); 
-x = OBA(LogReg(X,y),lambda);
+x = OBA(funObj,lambda);

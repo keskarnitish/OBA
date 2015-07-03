@@ -177,9 +177,9 @@ while(1)
     total_variables_moved=0;
     while(~isempty(Vk))
         if (quasi_newton == 1)
-            [PW,theta,invM] = lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
-            Hvfun = @(v) reduced_HV_from_memory(v,PW,theta,invM,F,n) ;
-            W = reduced_invHV_from_memory(-PG,PW,theta,invM,F);
+            [PW,theta,invM] = quasiNewton.lbfgs(mem.DP,mem.DG,mem.m,mem.updates,mem.size);
+            Hvfun = @(v) quasiNewton.reduced_HV_from_memory(v,PW,theta,invM,F,n) ;
+            W = quasiNewton.reduced_invHV_from_memory(-PG,PW,theta,invM,F);
         else
             Hvfun = @(v) fun.hess(v);
             W = CG ( Hvfun, PG, A, CGrestol, maxCGiter);
