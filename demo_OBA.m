@@ -1,4 +1,4 @@
-%% Description
+%% Demo of OBA for Binary Classification
 % In this very simple code, we load the breast cancer dataset which can be
 % obtained at (www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html)
 % and run the OBA algorithm on this dataset using the default options. 
