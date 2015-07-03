@@ -245,7 +245,7 @@ while(1)
     f_ista = f+grad'*(X_ista-X)+1/(2*tt)*norm(X_ista-X)^2;
     
     if(f+lambda*l1-f_ista-lambda*l1_ista>=-1e-8)
-        warning('OBA: ISTA Step Did Not Yield Descent. Increase Lipschitz Constant Estimate.');
+        %warning('OBA: ISTA Step Did Not Yield Descent. Increase Lipschitz Constant Estimate.');
     end
     
     X_trial = X_ista + alpha_dogleg*dogleg_d;
