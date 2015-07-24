@@ -1,7 +1,6 @@
 function [PW,theta,invM] = lbfgs(S,Y,m,k,m_max)
 % B = \theta I - WMW'
 %Page 4 of Byrd, La, Nocedal, Zha
-%What are the inputs?
 if(m==0)
     theta = 1;
     PW = [];  invM = [];
