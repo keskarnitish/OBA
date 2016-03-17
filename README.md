@@ -45,10 +45,21 @@ The parameters and their default values are
 For a detailed documentation of OBA and its associated functions, use `help OBA`.
 
 ## Citation
-If you use OBA for your research, please cite the following pre-print
-
-A Second-Order Method for Convex L1-Regularized Optimization with Active Set Prediction : http://arxiv.org/abs/1505.04315
-
+If you use OBA for your research, please cite the paper
+```
+@article{OBA_Keskar2016,
+author = {N. Keskar and J. Nocedal and F. Öztoprak and A. Wächter},
+title = {A second-order method for convex -regularized optimization with active-set prediction},
+journal = {Optimization Methods and Software},
+volume = {0},
+number = {0},
+pages = {1-17},
+year = {0},
+doi = {10.1080/10556788.2016.1138222},
+URL = {http://dx.doi.org/10.1080/10556788.2016.1138222},
+eprint = {http://dx.doi.org/10.1080/10556788.2016.1138222}
+}
+```
 
 
 
